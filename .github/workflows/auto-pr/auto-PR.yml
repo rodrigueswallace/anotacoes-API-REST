@@ -1,0 +1,33 @@
+name: Workflow para geração de PRs automáticos
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{secrets.PAT_TOKEN }}
+
+      - name: Instalar GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
+
+      - name: Criar PR a partir de branch temporária
+        env:
+          GH_TOKEN: ${{secrets.PAT_TOKEN }}
+        run: |
+          NEW_BRANCH="auto-pr-$(date +%s)"
+          git checkout -b $NEW_BRANCH
+          git push -u origin $NEW_BRANCH
+          gh pr create \
+            --title "PR Automático" \
+            --body "Este PR foi criado automaticamente via CLI." \
+            --base integrations \
+            --head $NEW_BRANCH

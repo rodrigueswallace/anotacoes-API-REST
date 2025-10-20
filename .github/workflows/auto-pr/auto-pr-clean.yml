@@ -1,0 +1,39 @@
+name: Limpar Branch Auto-PR
+
+on:
+  pull_request:
+    types: [closed] 
+
+permissions:
+  contents: write  
+
+jobs:
+  cleanup-auto-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Configurar Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Deletar branch auto-pr remota
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          MERGED="${{ github.event.pull_request.merged }}"
+
+          echo "🧾 Branch recebida: $BRANCH_NAME"
+          echo "🔀 PR mergeado? $MERGED"
+
+          if [[ "$BRANCH_NAME" == auto-pr* ]]; then
+            echo "🚀 Tentando deletar branch remota: $BRANCH_NAME"
+            git push origin --delete "$BRANCH_NAME" && \
+              echo "✅ Branch $BRANCH_NAME deletada com sucesso." || \
+              echo "❌ Falha ao deletar branch remota."
+          else
+            echo "⚠️ Branch $BRANCH_NAME não é auto-pr. Nada a fazer."
+          fi

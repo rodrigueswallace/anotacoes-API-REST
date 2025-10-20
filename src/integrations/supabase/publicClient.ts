@@ -1,0 +1,17 @@
+// Public schema client for accessing public views
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from './types';
+
+const SUPABASE_URL = "https://ockbibrzqfifchizrzgc.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ja2JpYnJ6cWZpZmNoaXpyemdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTkwMTUsImV4cCI6MjA3Mzc3NTAxNX0.Q4H-Z1VZ_ZsnYjSJBu11_1o1XtkzrxjB6-vuVNxLwSY";
+
+export const supabasePublic = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    storage: localStorage,
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+  db: {
+    schema: 'public'
+  }
+});

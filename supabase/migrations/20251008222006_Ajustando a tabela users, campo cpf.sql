@@ -1,0 +1,2 @@
+ALTER TABLE her.users_data
+ALTER COLUMN cpf TYPE VARCHAR(11);
